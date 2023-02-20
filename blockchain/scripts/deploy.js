@@ -8,13 +8,9 @@ const hre = require("hardhat");
 
 async function main() {
   const Lock = await hre.ethers.getContractFactory("NFTMarketplace");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
+  const lock = await Lock.deploy();
   await lock.deployed();
-
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+  console.log("Address Of NFT Contract = ",lock.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

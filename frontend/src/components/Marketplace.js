@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import NFTMarketplace from "../utils/NFTMarketplace.json";
 
 function Marketplace() {
-  const CONTRACT_ADDR = "";
+  const CONTRACT_ADDR = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const contract = new ethers.Contract(CONTRACT_ADDR, NFTMarketplace.abi, signer);
@@ -18,9 +18,9 @@ function Marketplace() {
     }
   };
 
-  useEffect(async () => {
-    await getAllNFT();
-  }, nftData);
+  useEffect(() => {
+    getAllNFT();
+  });
 
   if(nftData.length > 0){
     return (

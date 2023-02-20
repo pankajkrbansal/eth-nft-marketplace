@@ -8,6 +8,8 @@
 - CSS
 - Web3.js
 - ethers.js
+- Pinata
+- IPFS
 
 ## About Marketplace Contract
 This is a Solidity smart contract for an NFT marketplace that allows users to create and sell NFTs. The contract inherits from ERC721URIStorage, which is a standard implementation of the ERC721 NFT standard, and uses OpenZeppelin's Counters library to keep track of token IDs and the number of items sold.
