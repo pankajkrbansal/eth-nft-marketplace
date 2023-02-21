@@ -1,27 +1,43 @@
 import { useState } from "react";
+import { ethers } from 'ethers';
 
 let Navigation = () => {
   const [isWalletConnected, setWalletConnected] = useState(false);
-  const [account, setAccount] = useState('');
+  const [account, setAccount] = useState("");
 
-  let connectWithWallet = async() => {
+  let getAddress = async() => {
+    const provider = await new ethers.providers.Web3Provider(window.ethereum);
+    let signer = await provider.getSigner();
+    let account = await signer.getAddress();
+    setAccount(account);
+  }
+
+  let updateButton = async() => {
+    let btn = document.querySelector('.connectBtn');
+    btn.textContent = 'Connected';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-success');    
+  }
+
+  let connectWithWallet = async () => {
     console.log("wallet");
-    const {ethereum} = window;
+    const { ethereum } = window;
     if (!ethereum) {
-      <div classNameName="alert alert-secondary" role="alert">
-        A simple secondary alert—check it out!
-      </div>
+      alert("Wallet Not Found");
     }
     // take crypto account out from ethereum object
     let cryptoAccount = await ethereum.request({
       method: "eth_requestAccounts",
     });
+    getAddress();
+    updateButton();
     {
-      cryptoAccount.length == 0 || cryptoAccount.length == undefined ?
-         setWalletConnected(false)
+      cryptoAccount.length == 0 || cryptoAccount.length == undefined
+        ? setWalletConnected(false)
         : setWalletConnected(true);
     }
-  }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
@@ -58,9 +74,10 @@ let Navigation = () => {
           </li> */}
         </ul>
       </div>
-      <button className="btn btn-warning" onClick={connectWithWallet}>Connect With Metamask</button>
+      <button class="btn btn-primary connectBtn" onClick={connectWithWallet}>
+        Connect
+      </button>
     </nav>
-
   );
 };
 
