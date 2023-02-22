@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from 'ethers';
+// import {useLocation} from 'react-router'
 
 let Navigation = () => {
+  const [connected, updatedConnected] = useState(false);
   const [isWalletConnected, setWalletConnected] = useState(false);
   const [account, setAccount] = useState("");
+
+  // let location = useLocation();
 
   let getAddress = async() => {
     const provider = await new ethers.providers.Web3Provider(window.ethereum);
@@ -13,10 +17,18 @@ let Navigation = () => {
   }
 
   let updateButton = async() => {
-    let btn = document.querySelector('.connectBtn');
-    btn.textContent = 'Connected';
-    btn.classList.remove('btn-primary');
-    btn.classList.add('btn-success');    
+    console.log("update button = ", connected);
+    if(connected){
+      let btn = document.querySelector('.connectBtn');
+      btn.textContent = 'Connected';
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-success');
+    }else{
+      let btn = document.querySelector('.connectBtn');
+      btn.textContent = 'Connect Wallet';
+      btn.classList.remove('btn-success');
+      btn.classList.add('btn-primary');
+    }    
   }
 
   let connectWithWallet = async () => {
@@ -31,12 +43,25 @@ let Navigation = () => {
     });
     getAddress();
     updateButton();
+    let val = window.ethereum.isConnected();
+    updatedConnected(val);
+    //  window.location.replace(location.pathname)
     {
       cryptoAccount.length == 0 || cryptoAccount.length == undefined
         ? setWalletConnected(false)
         : setWalletConnected(true);
     }
   };
+
+  useEffect(() => {
+    let val = window.ethereum.isConnected();
+    console.log(val);
+    if(val){
+      getAddress();
+      updatedConnected(val);
+    }
+    updateButton();
+  },[]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -74,8 +99,8 @@ let Navigation = () => {
           </li> */}
         </ul>
       </div>
-      <button class="btn btn-primary connectBtn" onClick={connectWithWallet}>
-        Connect
+      <button className="btn btn-primary connectBtn" onClick={connectWithWallet}>
+        {connected? "Connected" : "Connect Wallet"}
       </button>
     </nav>
   );
