@@ -1,35 +1,36 @@
 import { useEffect, useState } from "react";
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 // import {useLocation} from 'react-router'
 
 let Navigation = () => {
-  const [connected, updatedConnected] = useState(false);
+  // const [connected, updatedConnected] = useState(false);
   const [isWalletConnected, setWalletConnected] = useState(false);
   const [account, setAccount] = useState("");
 
   // let location = useLocation();
 
-  let getAddress = async() => {
+  let getAddress = async () => {
     const provider = await new ethers.providers.Web3Provider(window.ethereum);
     let signer = await provider.getSigner();
     let account = await signer.getAddress();
+    console.log("getAddress", account);
     setAccount(account);
-  }
+  };
 
-  let updateButton = async() => {
-    console.log("update button = ", connected);
-    if(connected){
-      let btn = document.querySelector('.connectBtn');
-      btn.textContent = 'Connected';
-      btn.classList.remove('btn-primary');
-      btn.classList.add('btn-success');
-    }else{
-      let btn = document.querySelector('.connectBtn');
-      btn.textContent = 'Connect Wallet';
-      btn.classList.remove('btn-success');
-      btn.classList.add('btn-primary');
-    }    
-  }
+  let updateButton = async () => {
+    // console.log("updateButton = ", account);
+    if (isWalletConnected) {
+      let btn = document.querySelector(".connectBtn");
+      btn.textContent = "Connected";
+      btn.classList.remove("btn-primary");
+      btn.classList.add("btn-success");
+    } else {
+      let btn = document.querySelector(".connectBtn");
+      btn.textContent = "Connect Wallet";
+      btn.classList.remove("btn-success");
+      btn.classList.add("btn-primary");
+    }
+  };
 
   let connectWithWallet = async () => {
     console.log("wallet");
@@ -43,8 +44,6 @@ let Navigation = () => {
     });
     getAddress();
     updateButton();
-    let val = window.ethereum.isConnected();
-    updatedConnected(val);
     //  window.location.replace(location.pathname)
     {
       cryptoAccount.length == 0 || cryptoAccount.length == undefined
@@ -54,14 +53,20 @@ let Navigation = () => {
   };
 
   useEffect(() => {
-    let val = window.ethereum.isConnected();
-    console.log(val);
-    if(val){
-      getAddress();
-      updatedConnected(val);
-    }
-    updateButton();
-  },[]);
+    // let val = window.ethereum.isConnected();
+    let walletConnectionCheck = async () => {
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      }); //returns array of address
+      if (accounts.length > 0) {
+        setWalletConnected(true);
+        getAddress();
+        updateButton();
+      }
+    };
+    walletConnectionCheck();
+    console.log("==UseEffect==");
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -99,8 +104,11 @@ let Navigation = () => {
           </li> */}
         </ul>
       </div>
-      <button className="btn btn-primary connectBtn" onClick={connectWithWallet}>
-        {connected? "Connected" : "Connect Wallet"}
+      <button
+        className="btn btn-primary connectBtn"
+        onClick={connectWithWallet}
+      >
+        {isWalletConnected ? "Connected" : "Connect Wallet"}
       </button>
     </nav>
   );
